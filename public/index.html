@@ -76,6 +76,26 @@
             <!-- 结果区 -->
             <div id="resultArea" class="result-area hidden">
                 <h3 class="result-title">检测报告</h3>
+
+                <!-- 综合评分面板 -->
+                <div id="scorePanel" class="score-panel">
+                    <div class="score-ring">
+                        <svg viewBox="0 0 120 120" class="score-svg">
+                            <circle class="score-track" cx="60" cy="60" r="52"></circle>
+                            <circle class="score-progress" cx="60" cy="60" r="52" id="scoreProgress"></circle>
+                        </svg>
+                        <div class="score-text">
+                            <div class="score-num" id="scoreNum">0</div>
+                            <div class="score-unit">/ 100</div>
+                        </div>
+                    </div>
+                    <div class="score-info">
+                        <div class="score-grade" id="scoreGrade">检测中…</div>
+                        <div class="score-desc" id="scoreDesc">正在跑 7 大维度的黑盒检测</div>
+                        <div class="score-stats" id="scoreStats"></div>
+                    </div>
+                </div>
+
                 <div id="resultList" class="result-list"></div>
             </div>
         </div>
