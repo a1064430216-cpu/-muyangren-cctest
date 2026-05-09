@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>牧羊人测评站 - Claude Code API 真伪检测</title>
+    <meta name="description" content="牧羊人测评站，专业 Claude Code 中转 API Key 真伪检测、套壳识别、降智检查、Token 计费审计。" />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a href="#" class="logo">
+                <span class="logo-icon">🐑</span>
+                <span class="logo-text">牧羊人测评站</span>
+            </a>
+            <nav class="nav-links">
+                <a href="#detect">开始检测</a>
+                <a href="#features">检测维度</a>
+                <a href="#how">工作原理</a>
+                <a href="#faq">常见问题</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区 -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">
+                守护你的 <span class="accent">Claude Code</span> 钱包
+            </h1>
+            <p class="hero-subtitle">
+                牧羊人测评站 · 专业的 API 中转站真伪检测平台<br/>
+                帮你识破套壳、降智、虚假计费，把每一分钱都花在刀刃上
+            </p>
+            <div class="hero-cta">
+                <a href="#detect" class="btn btn-primary">立即检测</a>
+                <a href="#features" class="btn btn-ghost">了解检测维度</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat"><div class="stat-num">7</div><div class="stat-label">检测维度</div></div>
+                <div class="stat"><div class="stat-num">100%</div><div class="stat-label">黑盒验证</div></div>
+                <div class="stat"><div class="stat-num">0</div><div class="stat-label">存储你的 Key</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 检测面板 -->
+    <section id="detect" class="detect">
+        <div class="container">
+            <h2 class="section-title">开始检测</h2>
+            <p class="section-desc">输入你的中转站 API 地址和 Key，我们会进行多维度黑盒验证</p>
+
+            <div class="detect-card">
+                <div class="form-row">
+                    <label for="baseUrl">API 中转地址 (Base URL)</label>
+                    <input type="text" id="baseUrl" placeholder="https://example-relay.com/v1" />
+                </div>
+                <div class="form-row">
+                    <label for="apiKey">API Key</label>
+                    <input type="password" id="apiKey" placeholder="sk-xxxxxxxxxxxxxxxxxx" />
+                </div>
+                <div class="form-row">
+                    <label for="model">目标模型</label>
+                    <select id="model">
+                        <option value="claude-opus-4-7">claude-opus-4-7</option>
+                        <option value="claude-sonnet-4-6">claude-sonnet-4-6</option>
+                        <option value="claude-haiku-4-5">claude-haiku-4-5</option>
+                    </select>
+                </div>
+                <button id="detectBtn" class="btn btn-primary btn-block">开始黑盒检测</button>
+                <p class="form-hint">🔒 你的 API Key 仅用于本次检测，不会存储或上报</p>
+            </div>
+
+            <!-- 结果区 -->
+            <div id="resultArea" class="result-area hidden">
+                <h3 class="result-title">检测报告</h3>
+                <div id="resultList" class="result-list"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 检测维度 -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">7 大核心检测维度</h2>
+            <p class="section-desc">参考行业标准，全方位识别中转站真伪</p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>LLM 指纹验证</h3>
+                    <p>通过精心构造的提示词，识别响应背后是否真的是声明的 Claude 模型，而不是套壳的小模型。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌊</div>
+                    <h3>流结构完整性</h3>
+                    <p>检查 SSE 流式响应的事件序列、字段完整性，伪造的中转站往往在这里露出破绽。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📦</div>
+                    <h3>非流结构完整性</h3>
+                    <p>验证非流式 JSON 响应的字段、嵌套结构与官方一致，防止字段缺失型仿冒。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🖋️</div>
+                    <h3>签名校验</h3>
+                    <p>校验响应中的请求签名，识别是否经过中间篡改或重放。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✅</div>
+                    <h3>签名真实性</h3>
+                    <p>进一步比对签名生成方式，杜绝"形似而神非"的伪造签名。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🖼️</div>
+                    <h3>多模态能力</h3>
+                    <p>测试图像、文件等多模态输入处理，验证中转站是否真的支持完整能力。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Token 用量审计</h3>
+                    <p>对比实际生成内容与计费 Token，防止虚假计费、超量扣费等欺诈行为。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 工作原理 -->
+    <section id="how" class="how">
+        <div class="container">
+            <h2 class="section-title">工作原理</h2>
+            <div class="step-list">
+                <div class="step">
+                    <div class="step-num">01</div>
+                    <h4>输入 API 信息</h4>
+                    <p>提供中转站 Base URL 和你的 API Key</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">02</div>
+                    <h4>黑盒发送测试请求</h4>
+                    <p>系统发出多组精心设计的探针请求</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">03</div>
+                    <h4>分析响应特征</h4>
+                    <p>从 7 个维度比对官方响应特征</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">04</div>
+                    <h4>生成检测报告</h4>
+                    <p>详细呈现每个维度的通过/异常结果</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <h2 class="section-title">常见问题</h2>
+            <details class="faq-item">
+                <summary>我的 API Key 安全吗？</summary>
+                <p>本站不存储你的 API Key。请求结束后立即从内存中清除，且不会写入任何日志。</p>
+            </details>
+            <details class="faq-item">
+                <summary>检测结果是否 100% 准确？</summary>
+                <p>黑盒检测能覆盖大部分常见的欺诈手段，但无法保证 100% 准确。建议结合长期使用体感综合判断。</p>
+            </details>
+            <details class="faq-item">
+                <summary>检测一次需要消耗多少 Token？</summary>
+                <p>完整检测约消耗 1k–5k Token，具体取决于所选模型。</p>
+            </details>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 牧羊人测评站 · 让中转站不再是黑盒</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
