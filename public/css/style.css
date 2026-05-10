@@ -568,7 +568,37 @@ section {
 .badge.pass { background: rgba(52, 211, 153, 0.15); color: var(--success); }
 .badge.warn { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
 .badge.fail { background: rgba(248, 113, 113, 0.15); color: var(--danger); }
-.badge.pending { background: rgba(154, 160, 173, 0.15); color: var(--text-mute); }
+.badge.pending {
+    background: rgba(154, 160, 173, 0.15);
+    color: var(--text-mute);
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.badge.pending .dots {
+    display: inline-flex;
+    gap: 3px;
+    margin-left: 4px;
+}
+
+.badge.pending .dots > span {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: dot-pulse 1.3s infinite ease-in-out;
+}
+
+.badge.pending .dots > span:nth-child(2) { animation-delay: 0.2s; }
+.badge.pending .dots > span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dot-pulse {
+    0%, 80%, 100% { opacity: 0.25; transform: scale(0.7); }
+    40%           { opacity: 1;    transform: scale(1.1); }
+}
 
 .spinner {
     width: 14px;

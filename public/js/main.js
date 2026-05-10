@@ -148,7 +148,7 @@ function renderInitial() {
                 <span>${check.name}</span>
             </div>
             <div class="item-status">
-                <span class="badge pending">等待中</span>
+                <span class="badge pending">等待中<span class="dots"><span></span><span></span><span></span></span></span>
             </div>
         `;
         resultList.appendChild(div);
