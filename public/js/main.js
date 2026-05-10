@@ -35,6 +35,26 @@ const scoreProgress = document.getElementById("scoreProgress");
 
 detectBtn.addEventListener("click", onDetect);
 
+// Base URL 输入框失焦时自动规范化（去尾斜杠、补 /v1）
+baseUrlInp.addEventListener("blur", () => {
+    baseUrlInp.value = normalizeBaseUrlInput(baseUrlInp.value);
+});
+
+function normalizeBaseUrlInput(raw) {
+    let v = (raw || "").trim();
+    if (!v) return v;
+    if (!/^https?:\/\//i.test(v)) return v; // 不是合法 URL，不动
+
+    // 去尾斜杠
+    v = v.replace(/\/+$/, "");
+    // 去除常见误填
+    v = v.replace(/\/chat\/completions$/i, "");
+    v = v.replace(/\/v\d+\/messages$/i, "/v1");
+    // 末尾不是 /vN 时追加 /v1
+    if (!/\/v\d+$/i.test(v)) v = v + "/v1";
+    return v;
+}
+
 async function onDetect() {
     const baseUrl = baseUrlInp.value.trim();
     const apiKey  = apiKeyInp.value.trim();
@@ -305,7 +325,7 @@ async function submitContact(e) {
         setTimeout(closeContact, 1500);
     } catch (err) {
         contactHint.style.color = "#fbbf24";
-        contactHint.innerHTML = "提交失败，请直接发邮件至 <a href=\"mailto:a1064430216@gmail.com\">a1064430216@gmail.com</a>";
+        contactHint.textContent = "提交失败，请稍后重试";
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "提交";
