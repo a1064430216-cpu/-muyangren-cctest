@@ -7,10 +7,13 @@ const CHECKS = [
     { id: "sig",         name: "签名校验",           icon: "🖋️" },
     { id: "sigReal",     name: "签名真实性",         icon: "✅" },
     { id: "multimodal",  name: "多模态能力",         icon: "🖼️" },
-    { id: "tokens",      name: "Token 用量审计",    icon: "💰" },
 ];
 
-// 评分权重：每个维度 100/7 ≈ 14.29 分；pass=满分，warn=半分，fail=0 分
+// 总检测时长目标：约 30 秒（前端按节奏揭晓每个维度，体验更专业）
+const TOTAL_DURATION_MS = 30000;
+const REVEAL_INTERVAL_MS = TOTAL_DURATION_MS / (CHECKS.length + 1); // 留点余量给最终揭分
+
+// 评分权重：每个维度等权；pass=满分，warn=半分，fail=0 分
 const STATUS_SCORE = { pass: 1.0, warn: 0.5, fail: 0.0 };
 
 // 圆环周长 = 2 × π × 52 ≈ 326.73
@@ -53,42 +56,64 @@ async function onDetect() {
     resultArea.classList.remove("hidden");
     resultArea.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    CHECKS.forEach(c => setStatus(c.id, "running"));
+    // 第一项立刻进入 running 状态，其余仍为 pending
+    setStatus(CHECKS[0].id, "running");
 
-    let collected = {};
-    try {
-        const resp = await fetch("/api/check", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ baseUrl, apiKey, model }),
-        });
-        const data = await resp.json();
-        if (!resp.ok || !data.ok) throw new Error(data.error || "后端检测失败");
-
-        for (const check of CHECKS) {
-            const r = data.results[check.id];
-            if (r) {
-                setStatus(check.id, r.status, r.message);
-                collected[check.id] = r;
-            } else {
-                setStatus(check.id, "warn", "未实现");
-                collected[check.id] = { status: "warn", message: "未实现" };
+    // 后端请求与 30 秒倒计时同时进行
+    const startedAt = Date.now();
+    const backendPromise = (async () => {
+        try {
+            const resp = await fetch("/api/check", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ baseUrl, apiKey, model }),
+            });
+            const data = await resp.json();
+            if (!resp.ok || !data.ok) throw new Error(data.error || "后端检测失败");
+            return { ok: true, results: data.results };
+        } catch (e) {
+            console.warn("后端不可用，使用模拟检测：", e);
+            const fallback = {};
+            for (const check of CHECKS) {
+                fallback[check.id] = await mockRunCheck();
             }
+            return { ok: false, results: fallback };
         }
-    } catch (e) {
-        console.warn("后端不可用，使用模拟检测：", e);
-        for (const check of CHECKS) {
-            const result = await mockRunCheck();
-            setStatus(check.id, result.status, result.message);
-            collected[check.id] = result;
+    })();
+
+    // 节奏化逐项揭晓：等到后端有结果且时间到达每项时点
+    const collected = {};
+    const backendData = await backendPromise; // 拿到后端结果，但不立刻全部展示
+    for (let i = 0; i < CHECKS.length; i++) {
+        const targetTime = startedAt + REVEAL_INTERVAL_MS * (i + 1);
+        const remaining = targetTime - Date.now();
+        if (remaining > 0) await sleep(remaining);
+
+        const check = CHECKS[i];
+        const r = backendData.results[check.id] || { status: "warn", message: "未实现" };
+        setStatus(check.id, r.status, r.message);
+        collected[check.id] = r;
+
+        // 把下一个维度切到 running，让用户感知到进行中
+        if (i + 1 < CHECKS.length) {
+            setStatus(CHECKS[i + 1].id, "running");
         }
-        showOfflineHint();
     }
+
+    // 等到 30 秒整再揭晓总分
+    const tail = startedAt + TOTAL_DURATION_MS - Date.now();
+    if (tail > 0) await sleep(tail);
 
     updateScorePanel(collected);
 
+    if (!backendData.ok) showOfflineHint();
+
     detectBtn.disabled = false;
     detectBtn.textContent = "重新检测";
+}
+
+function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
 }
 
 function renderInitial() {
@@ -137,7 +162,7 @@ function resetScorePanel() {
     scorePanel.className = "score-panel is-loading";
     scoreNum.textContent = "0";
     scoreGrade.textContent = "检测中…";
-    scoreDesc.textContent = "正在跑 7 大维度的黑盒检测";
+    scoreDesc.textContent = "正在跑 6 大维度的黑盒检测";
     scoreStats.innerHTML = "";
     scoreProgress.style.strokeDashoffset = RING_LENGTH;
 }
