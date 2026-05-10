@@ -27,8 +27,23 @@ const server = http.createServer(async (req, res) => {
     if (pathname === "/api/check" && req.method === "POST") {
         return handleCheck(req, res);
     }
+    if (pathname === "/api/contact" && req.method === "POST") {
+        return handleContact(req, res);
+    }
     return serveStatic(pathname, res);
 });
+
+async function handleContact(req, res) {
+    const body = await readBody(req);
+    let payload;
+    try { payload = JSON.parse(body); }
+    catch { return sendJSON(res, 400, { error: "Invalid JSON" }); }
+    const { email, message } = payload;
+    if (!email || !message) return sendJSON(res, 400, { error: "缺少 email 或 message" });
+    console.log(`[${new Date().toISOString()}] 联系我们：${email}`);
+    console.log("内容：", message);
+    sendJSON(res, 200, { ok: true });
+}
 
 server.listen(PORT, () => {
     console.log(`\n🐑 牧羊人测评站启动成功！监听端口 ${PORT}`);

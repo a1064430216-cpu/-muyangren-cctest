@@ -90,6 +90,124 @@ a {
     color: var(--text);
 }
 
+.btn-contact {
+    margin-left: 24px;
+    padding: 8px 16px;
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--primary-strong);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-contact:hover {
+    background: var(--primary-strong);
+    color: #06140d;
+}
+
+/* ===== 联系我们模态框 ===== */
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.modal.hidden { display: none; }
+
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.modal-card {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow);
+    animation: modal-in 0.2s ease-out;
+}
+
+@keyframes modal-in {
+    from { opacity: 0; transform: translateY(8px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.modal-head h3 {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    color: var(--text-mute);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+}
+
+.modal-close:hover {
+    background: var(--border);
+    color: var(--text);
+}
+
+.modal-desc {
+    font-size: 13px;
+    color: var(--text-mute);
+    margin-bottom: 18px;
+}
+
+.modal-body textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.2s;
+}
+
+.modal-body textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+#contactHint a {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+    .btn-contact { margin-left: 0; }
+}
+
 /* ===== 英雄区 ===== */
 .hero {
     padding: 96px 0 80px;

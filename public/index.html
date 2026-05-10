@@ -21,8 +21,35 @@
                 <a href="#how">工作原理</a>
                 <a href="#faq">常见问题</a>
             </nav>
+            <button id="contactBtn" class="btn-contact" type="button">联系我们</button>
         </div>
     </header>
+
+    <!-- 联系我们模态框 -->
+    <div id="contactModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close></div>
+        <div class="modal-card" role="dialog" aria-labelledby="contactTitle">
+            <div class="modal-head">
+                <h3 id="contactTitle">联系我们</h3>
+                <button class="modal-close" type="button" data-close aria-label="关闭">×</button>
+            </div>
+            <p class="modal-desc">遇到问题或建议？告诉我们，我们会尽快回复。</p>
+            <form id="contactForm" class="modal-body">
+                <div class="form-row">
+                    <label for="contactEmail">你的邮箱</label>
+                    <input type="email" id="contactEmail" placeholder="you@example.com" required maxlength="120" />
+                </div>
+                <div class="form-row">
+                    <label for="contactMsg">遇到的问题 / 建议</label>
+                    <textarea id="contactMsg" rows="5" placeholder="请简要描述你遇到的问题或建议…" required maxlength="2000"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">提交</button>
+                <p class="form-hint" id="contactHint">
+                    或直接发邮件至 <a href="mailto:a1064430216@gmail.com">a1064430216@gmail.com</a>
+                </p>
+            </form>
+        </div>
+    </div>
 
     <!-- 英雄区 -->
     <section class="hero">
@@ -66,7 +93,7 @@
                     <select id="model">
                         <option value="claude-opus-4-7">claude-opus-4-7</option>
                         <option value="claude-sonnet-4-6">claude-sonnet-4-6</option>
-                        <option value="claude-haiku-4-5">claude-haiku-4-5</option>
+                        <option value="claude-opus-4-6">claude-opus-4-6</option>
                     </select>
                 </div>
                 <button id="detectBtn" class="btn btn-primary btn-block">开始黑盒检测</button>

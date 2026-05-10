@@ -246,3 +246,68 @@ function mockRunCheck() {
         }, 600 + Math.random() * 800);
     });
 }
+
+// ============ 联系我们模态框 ============
+
+const contactBtn   = document.getElementById("contactBtn");
+const contactModal = document.getElementById("contactModal");
+const contactForm  = document.getElementById("contactForm");
+const contactHint  = document.getElementById("contactHint");
+const contactEmail = document.getElementById("contactEmail");
+const contactMsg   = document.getElementById("contactMsg");
+
+if (contactBtn) {
+    contactBtn.addEventListener("click", openContact);
+    contactModal.addEventListener("click", (e) => {
+        if (e.target.dataset.close !== undefined) closeContact();
+    });
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !contactModal.classList.contains("hidden")) closeContact();
+    });
+    contactForm.addEventListener("submit", submitContact);
+}
+
+function openContact() {
+    contactModal.classList.remove("hidden");
+    contactModal.setAttribute("aria-hidden", "false");
+    setTimeout(() => contactEmail.focus(), 50);
+}
+
+function closeContact() {
+    contactModal.classList.add("hidden");
+    contactModal.setAttribute("aria-hidden", "true");
+}
+
+async function submitContact(e) {
+    e.preventDefault();
+    const email = contactEmail.value.trim();
+    const message = contactMsg.value.trim();
+    if (!email || !message) return;
+
+    const submitBtn = contactForm.querySelector("button[type=submit]");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "提交中…";
+    contactHint.style.color = "";
+    contactHint.innerHTML = "正在提交…";
+
+    try {
+        const resp = await fetch("/api/contact", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, message }),
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok || !data.ok) throw new Error(data.error || "提交失败");
+
+        contactHint.style.color = "#34d399";
+        contactHint.textContent = "✓ 已收到，我们会尽快回复";
+        contactForm.reset();
+        setTimeout(closeContact, 1500);
+    } catch (err) {
+        contactHint.style.color = "#fbbf24";
+        contactHint.innerHTML = "提交失败，请直接发邮件至 <a href=\"mailto:a1064430216@gmail.com\">a1064430216@gmail.com</a>";
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "提交";
+    }
+}
