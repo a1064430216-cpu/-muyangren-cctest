@@ -159,15 +159,23 @@ function setStatus(id, status, message = "") {
     const row = document.getElementById(`r-${id}`);
     if (!row) return;
     const statusEl = row.querySelector(".item-status");
+    const short = truncate(message, 60);
+    const fullAttr = message ? ` title="${escapeHtml(message)}"` : "";
     if (status === "running") {
         statusEl.innerHTML = `<span class="spinner"></span>`;
     } else if (status === "pass") {
-        statusEl.innerHTML = `<span class="badge pass">通过${message ? " · " + escapeHtml(message) : ""}</span>`;
+        statusEl.innerHTML = `<span class="badge pass"${fullAttr}>通过${short ? " · " + escapeHtml(short) : ""}</span>`;
     } else if (status === "warn") {
-        statusEl.innerHTML = `<span class="badge warn">可疑${message ? " · " + escapeHtml(message) : ""}</span>`;
+        statusEl.innerHTML = `<span class="badge warn"${fullAttr}>可疑${short ? " · " + escapeHtml(short) : ""}</span>`;
     } else if (status === "fail") {
-        statusEl.innerHTML = `<span class="badge fail">异常${message ? " · " + escapeHtml(message) : ""}</span>`;
+        statusEl.innerHTML = `<span class="badge fail"${fullAttr}>异常${short ? " · " + escapeHtml(short) : ""}</span>`;
     }
+}
+
+function truncate(s, n) {
+    if (!s) return "";
+    s = String(s).replace(/\s+/g, " ").trim();
+    return s.length > n ? s.slice(0, n) + "…" : s;
 }
 
 function escapeHtml(s) {
